@@ -92,17 +92,17 @@ public class TestPPDAddenda {
 		
 		PPDEntry entry = new PPDEntry();
 		
+		entry.transactionCode = TransactionCode.CODE_27;
+		entry.receivingDfiIdentification = new RoutingNumber("053200019");
+		entry.dfiAccountNumber = "12345";
 		entry.amount = 10500;
 		entry.individualIdentificationNumber = "c-1";
-		entry.dfiAccountNumber = "12345";
-		entry.discretionaryData = "DD";
 		entry.individualName = "Bachman Eric";
-		entry.receivingDfiIdentification = new RoutingNumber("053200019");
-		entry.traceNumber = new TraceNumber(new RoutingNumber("076401251"), 5655291);
-		entry.transactionCode = TransactionCode.CODE_27;
+		entry.discretionaryData = "DD";
 		entry.addenda = new PPDEntryAddenda();
 		entry.addenda.paymentRelatedInformation = "as;ljasdl;kjasdl;jasdf;";
-		
+		entry.traceNumber = new TraceNumber(new RoutingNumber("076401251"), 5655291);
+
 		batch.addEntry(entry);
 		
 		StringWriter writer = new StringWriter();
