@@ -69,10 +69,18 @@ public class AchFileWriter {
 
 	private final Writer writer;
 	private final AchFile file;
+	private final Boolean truncateFields;
+
+	public AchFileWriter(AchFile file, Writer writer, Boolean truncateFields) {
+		this.file = file;
+		this.writer = writer;
+		this.truncateFields = truncateFields;
+	}
 	
 	public AchFileWriter(AchFile file, Writer writer) {
 		this.file = file;
 		this.writer = writer;
+		this.truncateFields = false;
 	}
 	
 	public void write() throws AchFileFormatException, IOException {
@@ -260,7 +268,7 @@ public class AchFileWriter {
 		
 		format.control.blockCount = blockCount;
 		
-		AchFileFormatWriter formatWriter = new AchFileFormatWriter(format, writer);
+		AchFileFormatWriter formatWriter = new AchFileFormatWriter(format, writer, truncateFields);
 		formatWriter.write();
 	}
 	

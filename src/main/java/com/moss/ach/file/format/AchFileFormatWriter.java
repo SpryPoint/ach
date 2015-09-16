@@ -45,10 +45,15 @@ public class AchFileFormatWriter {
 
 	private final FieldWriter writer;
 	private final AchFileFormat file;
-	
+
 	public AchFileFormatWriter(AchFileFormat file, Writer writer) {
 		this.file = file;
-		this.writer = new FieldWriter(writer);
+		this.writer = new FieldWriter(writer, false);
+	}
+
+	public AchFileFormatWriter(AchFileFormat file, Writer writer, Boolean truncateFields) {
+		this.file = file;
+		this.writer = new FieldWriter(writer, truncateFields);
 	}
 	
 	public void write() throws AchFileFormatException, IOException {

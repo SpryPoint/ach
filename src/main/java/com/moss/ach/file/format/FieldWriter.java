@@ -39,6 +39,7 @@ package com.moss.ach.file.format;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Arrays;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,9 +49,16 @@ public class FieldWriter {
 	
 	private final Log log = LogFactory.getLog(this.getClass());
 	private final Writer writer;
-	
+	private final Boolean truncateFields;
+
 	public FieldWriter(Writer writer) {
 		this.writer = writer;
+		this.truncateFields = false;
+	}
+
+	public FieldWriter(Writer writer, Boolean truncateFields) {
+		this.writer = writer;
+		this.truncateFields = truncateFields;
 	}
 
 	public <T> void write(Class<? extends Field<T>> fieldClass, T value) throws AchFileFormatException, IOException {
@@ -101,8 +109,10 @@ public class FieldWriter {
 		try {
 			char[] formattedOutput = field.format(value);
 			
-			if (formattedOutput.length != field.getLength()) {
+			if (formattedOutput.length != field.getLength() && !truncateFields) {
 				throw new AchFileFormatException("Field '" + fieldName + "' has a formatted output of an invalid length: " + new String(formattedOutput));
+			} else if (formattedOutput.length != field.getLength()) {
+				formattedOutput = Arrays.copyOf(formattedOutput, field.getLength());
 			}
 			
 			writer.write(formattedOutput);

@@ -40,6 +40,8 @@ package com.moss.ach.file;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import com.moss.ach.file.format.AchFileFormatException;
+import com.moss.usbanknumbers.RoutingNumberException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -63,9 +65,41 @@ public class TestPPDAddenda {
 	
 	@Test
 	public void ppdWriteRead() throws Exception {
+		AchFile file = getAchFile();
 		
+		StringWriter writer = new StringWriter();
+		new AchFileWriter(file, writer).write();
+		
+		AchFileReader reader = new AchFileReader(new StringReader(writer.getBuffer().toString()));
+		AchFile readFile = reader.read();
+		
+		PPDEntry e = (PPDEntry) readFile.getBatches().get(0).getEntries().get(0);
+		
+		Assert.assertEquals(((PPDEntry)file.getBatches().get(0).getEntries().get(0)).addenda.paymentRelatedInformation, e.addenda.paymentRelatedInformation);
+	}
+
+	@Test(expected = AchFileFormatException.class)
+	public void ppdWriteTooLongException() throws Exception {
+		AchFile file = getAchFile();
+		file.setImmediateOriginName(file.getImmediateOriginName() + "tootootoolong");
+
+		StringWriter writer = new StringWriter();
+		new AchFileWriter(file, writer).write();
+	}
+
+	@Test
+	public void ppdWriteTooLongTruncate() throws Exception {
+		AchFile file = getAchFile();
+		file.setImmediateOriginName(file.getImmediateOriginName() + "tootootoolong");
+
+		StringWriter writer = new StringWriter();
+		new AchFileWriter(file, writer, true).write();
+
+	}
+
+	private AchFile getAchFile() throws SimpleDateException, SimpleTimeException, FileIdModifierException, RoutingNumberException, TraceNumberException {
 		AchFile file = new AchFile();
-		
+
 		file.creationDate = new SimpleDate(8, 7, 29);
 		file.creationTime = new SimpleTime(15, 11);
 		file.fileIdModifier = new FileIdModifier('A');
@@ -74,9 +108,9 @@ public class TestPPDAddenda {
 		file.immediateOrigin = new RoutingNumber("076401251");
 		file.immediateOriginName = "companyname";
 		file.referenceCode = null;
-		
+
 		AchBatch<PPDEntry> batch = new AchBatch<PPDEntry>();
-		
+
 		batch.companyDescriptiveDate = "000002";
 		batch.companyDiscretionaryData = null;
 		batch.companyEntryDescription = "CHECKPAYMT";
@@ -89,9 +123,9 @@ public class TestPPDAddenda {
 		batch.settlementDate = null;
 		batch.standardEntryClassCode = StandardEntryClassCode.PPD;
 		file.addBatch(batch);
-		
+
 		PPDEntry entry = new PPDEntry();
-		
+
 		entry.transactionCode = TransactionCode.CODE_27;
 		entry.receivingDfiIdentification = new RoutingNumber("053200019");
 		entry.dfiAccountNumber = "12345";
@@ -104,15 +138,6 @@ public class TestPPDAddenda {
 		entry.traceNumber = new TraceNumber(new RoutingNumber("076401251"), 5655291);
 
 		batch.addEntry(entry);
-		
-		StringWriter writer = new StringWriter();
-		new AchFileWriter(file, writer).write();
-		
-		AchFileReader reader = new AchFileReader(new StringReader(writer.getBuffer().toString()));
-		AchFile readFile = reader.read();
-		
-		PPDEntry e = (PPDEntry) readFile.getBatches().get(0).getEntries().get(0);
-		
-		Assert.assertEquals(entry.addenda.paymentRelatedInformation, e.addenda.paymentRelatedInformation);
+		return file;
 	}
 }
