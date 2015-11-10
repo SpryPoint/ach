@@ -43,14 +43,14 @@
     <artifactId>ach</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    
+
     <name>ach</name>
     <description />
 
     <properties>
         <github.global.server>github</github.global.server>
     </properties>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -100,7 +100,7 @@
                     <branch>refs/heads/master</branch>                         <!-- remote branch name -->
                     <includes><include>**/*</include></includes>
                     <repositoryName>mvn-repo</repositoryName>                  <!-- github repo name -->
-                    <repositoryOwner>spry-rproud</repositoryOwner>             <!-- github username  -->
+                    <repositoryOwner>SpryPoint</repositoryOwner>               <!-- github username  -->
                     <merge>true</merge>                                        <!-- don't overwrite previous versions -->
                 </configuration>
                 <executions>
