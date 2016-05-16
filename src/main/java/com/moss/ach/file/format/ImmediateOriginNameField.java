@@ -40,7 +40,7 @@ package com.moss.ach.file.format;
 class ImmediateOriginNameField extends AbstractStringField {
 
 	public int getLength() {
-		return 23;
+		return 155;
 	}
 
 	public RequirementType getRequirementType() {
